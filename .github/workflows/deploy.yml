@@ -1,0 +1,96 @@
+name: Deploy to Huawei Cloud
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        type: choice
+        options:
+          - test
+          - prod
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      DEPLOY_ENV: ${{ inputs.environment }}
+      SWR_REGISTRY: ${{ secrets.HUAWEI_SWR_REGISTRY }}
+      SWR_ORGANIZATION: ${{ secrets.HUAWEI_SWR_ORGANIZATION }}
+      KUBE_CONFIG_DATA: ${{ inputs.environment == 'prod' && secrets.KUBE_CONFIG_PROD || secrets.KUBE_CONFIG_TEST }}
+      VITE_API_BASE_URL: ${{ inputs.environment == 'prod' && secrets.PROD_API_BASE_URL || secrets.TEST_API_BASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Verify backend
+        working-directory: backend
+        run: mvn -B -ntp verify
+
+      - name: Verify frontend and build H5
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run type-check
+          npm run build:h5
+
+      - name: Log in to Huawei Cloud SWR
+        run: |
+          echo "${{ secrets.HUAWEI_SWR_PASSWORD }}" \
+            | docker login "$SWR_REGISTRY" \
+                --username "${{ secrets.HUAWEI_SWR_USERNAME }}" \
+                --password-stdin
+
+      - name: Build and push images
+        run: |
+          IMAGE_TAG="${GITHUB_SHA::12}"
+          API_IMAGE="$SWR_REGISTRY/$SWR_ORGANIZATION/scan-order-api:$IMAGE_TAG"
+          WEB_IMAGE="$SWR_REGISTRY/$SWR_ORGANIZATION/scan-order-web:$IMAGE_TAG"
+
+          docker build -t "$API_IMAGE" backend
+          docker build \
+            --build-arg "VITE_API_BASE_URL=$VITE_API_BASE_URL" \
+            -t "$WEB_IMAGE" frontend
+          docker push "$API_IMAGE"
+          docker push "$WEB_IMAGE"
+
+          echo "API_IMAGE=$API_IMAGE" >> "$GITHUB_ENV"
+          echo "WEB_IMAGE=$WEB_IMAGE" >> "$GITHUB_ENV"
+
+      - name: Configure CCE access
+        run: |
+          mkdir -p "$HOME/.kube"
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+
+      - name: Deploy manifests
+        run: |
+          MANIFESTS="$(kubectl kustomize "deploy/k8s/overlays/$DEPLOY_ENV")"
+          MANIFESTS="$(echo "$MANIFESTS" | sed \
+            -e "s#swr.cn-north-4.myhuaweicloud.com/your-org/scan-order-api:$DEPLOY_ENV#$API_IMAGE#g" \
+            -e "s#swr.cn-north-4.myhuaweicloud.com/your-org/scan-order-web:$DEPLOY_ENV#$WEB_IMAGE#g")"
+          echo "$MANIFESTS" | kubectl apply -f -
+          kubectl -n "scan-order-$DEPLOY_ENV" rollout status deployment/scan-order-api --timeout=180s
+          kubectl -n "scan-order-$DEPLOY_ENV" rollout status deployment/scan-order-web --timeout=120s
+

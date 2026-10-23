@@ -4,4 +4,14 @@ project.private.config.json
 .DS_Store
 Thumbs.db
 *.log
+backend/target/
+frontend/dist/
+frontend/.hbuilderx/
+frontend/node_modules/
+*.iml
+.idea/
+.vscode/
+.env.local
+deploy/k8s/**/secret.yaml
+deploy/k8s/**/secret.env
 

@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:scan_order_test}
+    username: ${DB_USERNAME:scan_order}
+    password: ${DB_PASSWORD:scan_order_test}
+
+logging:
+  level:
+    com.zaobian.order: INFO
+

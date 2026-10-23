@@ -2,9 +2,14 @@
   "name": "scan-order-miniapp",
   "version": "0.1.0",
   "private": true,
-  "description": "微信扫码点餐小程序",
+  "description": "基于 uni-app、Spring Boot 与 PostgreSQL 的扫码点餐系统",
   "scripts": {
-    "check": "node scripts/check-project.js"
+    "frontend:install": "npm --prefix frontend install",
+    "frontend:dev:h5": "npm --prefix frontend run dev:h5",
+    "frontend:dev:mp-weixin": "npm --prefix frontend run dev:mp-weixin",
+    "frontend:build:h5": "npm --prefix frontend run build:h5",
+    "frontend:build:mp-weixin": "npm --prefix frontend run build:mp-weixin",
+    "frontend:check": "npm --prefix frontend run type-check"
   }
 }
 
