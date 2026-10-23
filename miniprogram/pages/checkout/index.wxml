@@ -1,0 +1,100 @@
+<view class="checkout-page">
+  <view class="checkout-heading">
+    <view class="section-label">YOUR ORDER</view>
+    <view class="checkout-title">确认一下，马上开做</view>
+    <view class="checkout-subtitle">桌号 {{tableNo}} · 共 {{totalQuantity}} 份</view>
+  </view>
+
+  <view wx:if="{{lines.length}}" class="content-stack">
+    <view class="panel">
+      <view class="panel-heading">
+        <view class="panel-title">用餐方式</view>
+        <view class="panel-caption">请选择</view>
+      </view>
+      <view class="order-type-grid">
+        <button
+          class="order-type-card {{orderType === '堂食' ? 'order-type-active' : ''}}"
+          data-type="堂食"
+          bindtap="selectOrderType"
+        >
+          <text class="order-type-icon">🥢</text>
+          <text class="order-type-name">堂食</text>
+          <text class="order-type-note">在店内享用</text>
+        </button>
+        <button
+          class="order-type-card {{orderType === '打包' ? 'order-type-active' : ''}}"
+          data-type="打包"
+          bindtap="selectOrderType"
+        >
+          <text class="order-type-icon">📦</text>
+          <text class="order-type-name">打包</text>
+          <text class="order-type-note">打包带走</text>
+        </button>
+      </view>
+    </view>
+
+    <view class="panel">
+      <view class="panel-heading">
+        <view class="panel-title">菜品明细</view>
+        <view class="panel-caption">{{totalQuantity}} 份</view>
+      </view>
+      <view wx:for="{{lines}}" wx:key="id" class="checkout-line">
+        <view class="line-visual" style="background: {{item.tone}}">{{item.emoji}}</view>
+        <view class="line-copy">
+          <view class="line-name">{{item.name}}</view>
+          <view class="line-meta">¥{{item.priceText}} × {{item.quantity}}</view>
+        </view>
+        <view class="line-total">¥{{item.lineTotalText}}</view>
+      </view>
+    </view>
+
+    <view class="panel remark-panel">
+      <view class="panel-heading">
+        <view class="panel-title">口味备注</view>
+        <view class="panel-caption">选填</view>
+      </view>
+      <textarea
+        class="remark-input"
+        value="{{remark}}"
+        maxlength="80"
+        auto-height
+        placeholder="例如：少辣，不要香菜"
+        placeholder-class="remark-placeholder"
+        bindinput="onRemarkInput"
+      ></textarea>
+    </view>
+
+    <view class="summary-panel">
+      <view class="summary-row">
+        <text>菜品小计</text>
+        <text>¥{{subtotalText}}</text>
+      </view>
+      <view class="summary-row summary-total">
+        <text>合计</text>
+        <text><text class="summary-currency">¥</text>{{subtotalText}}</text>
+      </view>
+      <view class="summary-note">当前为演示订单，不会产生实际扣款</view>
+    </view>
+  </view>
+
+  <view wx:else class="empty-state">
+    <view class="empty-title">购物车还是空的</view>
+    <view class="empty-copy">返回菜单挑选几道喜欢的菜吧</view>
+  </view>
+
+  <view class="checkout-footer">
+    <view class="footer-total">
+      <text class="footer-label">合计</text>
+      <text class="footer-price"><text class="footer-currency">¥</text>{{subtotalText}}</text>
+    </view>
+    <button
+      class="submit-button"
+      disabled="{{!lines.length || submitting}}"
+      bindtap="submitOrder"
+    >
+      {{submitting ? '提交中…' : '确认下单'}}
+    </button>
+  </view>
+  <view class="safe-bottom"></view>
+</view>
+

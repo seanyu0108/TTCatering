@@ -1,0 +1,10 @@
+{
+  "name": "scan-order-miniapp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "微信扫码点餐小程序",
+  "scripts": {
+    "check": "node scripts/check-project.js"
+  }
+}
+

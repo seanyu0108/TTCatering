@@ -1,0 +1,257 @@
+.order-page {
+  min-height: 100vh;
+  padding: 20rpx 32rpx calc(60rpx + env(safe-area-inset-bottom));
+}
+
+.success-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 54rpx 24rpx 44rpx;
+}
+
+.success-mark {
+  position: relative;
+  width: 108rpx;
+  height: 108rpx;
+  background: #64704d;
+  border-radius: 50%;
+  box-shadow: 0 0 0 16rpx rgba(100, 112, 77, 0.1);
+}
+
+.check-line {
+  position: absolute;
+  height: 7rpx;
+  background: #fff9ee;
+  border-radius: 4rpx;
+}
+
+.check-line-one {
+  top: 58rpx;
+  left: 26rpx;
+  width: 28rpx;
+  transform: rotate(43deg);
+}
+
+.check-line-two {
+  top: 50rpx;
+  left: 44rpx;
+  width: 42rpx;
+  transform: rotate(-47deg);
+}
+
+.success-title {
+  margin-top: 34rpx;
+  color: #2f2a24;
+  font-family: "Songti SC", "STSong", serif;
+  font-size: 48rpx;
+  font-weight: 700;
+}
+
+.success-copy {
+  margin-top: 10rpx;
+  color: #8d7969;
+  font-size: 23rpx;
+}
+
+.pickup-number {
+  margin-top: 30rpx;
+  color: #be4d2d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 70rpx;
+  font-weight: 700;
+  letter-spacing: 7rpx;
+}
+
+.pickup-caption {
+  margin-top: 2rpx;
+  color: #ab9685;
+  font-size: 19rpx;
+  letter-spacing: 4rpx;
+}
+
+.order-card,
+.detail-card {
+  margin-bottom: 20rpx;
+  padding: 28rpx;
+  background: #fffaf3;
+  border: 2rpx solid #eee1d4;
+  border-radius: 30rpx;
+}
+
+.order-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.order-card-label {
+  color: #332c26;
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.order-type {
+  margin-top: 7rpx;
+  color: #968271;
+  font-size: 21rpx;
+}
+
+.order-status {
+  padding: 10rpx 18rpx;
+  color: #9e4e32;
+  font-size: 21rpx;
+  font-weight: 650;
+  background: #f6e3d2;
+  border-radius: 16rpx;
+}
+
+.progress-track {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  margin: 34rpx 28rpx 4rpx;
+}
+
+.progress-track::before {
+  position: absolute;
+  top: 10rpx;
+  right: 18rpx;
+  left: 18rpx;
+  height: 2rpx;
+  content: "";
+  background: #e6d8ca;
+}
+
+.progress-step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.progress-dot {
+  width: 22rpx;
+  height: 22rpx;
+  background: #e6d8ca;
+  border: 5rpx solid #fffaf3;
+  border-radius: 50%;
+}
+
+.progress-dot-done {
+  background: #6d7751;
+}
+
+.progress-label {
+  margin-top: 8rpx;
+  color: #a28e7e;
+  font-size: 19rpx;
+}
+
+.progress-label-done {
+  color: #596342;
+  font-weight: 600;
+}
+
+.card-heading {
+  padding-bottom: 18rpx;
+  color: #3c332c;
+  font-size: 27rpx;
+  font-weight: 700;
+  border-bottom: 1rpx solid #eee3d8;
+}
+
+.order-line {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0e6dc;
+}
+
+.order-line-main {
+  display: flex;
+  flex: 1;
+  gap: 12rpx;
+  align-items: center;
+}
+
+.order-line-name {
+  color: #473c33;
+  font-size: 24rpx;
+}
+
+.order-line-quantity {
+  color: #a38e7d;
+  font-size: 20rpx;
+}
+
+.order-line-price {
+  color: #4b3d32;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.order-remark {
+  margin-top: 18rpx;
+  padding: 16rpx 18rpx;
+  color: #8a7564;
+  font-size: 21rpx;
+  line-height: 1.55;
+  background: #f8f1e8;
+  border-radius: 16rpx;
+}
+
+.total-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-top: 22rpx;
+  color: #3e342c;
+  font-size: 25rpx;
+  font-weight: 650;
+}
+
+.total-price {
+  color: #c44b2a;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
+.order-meta {
+  padding: 8rpx 10rpx 24rpx;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8rpx 0;
+  color: #9a8676;
+  font-size: 20rpx;
+}
+
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 16rpx;
+  margin-top: 8rpx;
+}
+
+.action-button {
+  min-height: 92rpx;
+}
+
+.missing-title {
+  color: #45392f;
+  font-size: 30rpx;
+  font-weight: 650;
+}
+
+.missing-copy {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  line-height: 1.6;
+}
+

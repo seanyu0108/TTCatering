@@ -1,0 +1,19 @@
+{
+  "description": "微信扫码点餐小程序",
+  "packOptions": {
+    "ignore": []
+  },
+  "setting": {
+    "es6": true,
+    "postcss": true,
+    "minified": true,
+    "urlCheck": false
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.6.6",
+  "appid": "touristappid",
+  "projectname": "scan-order-miniapp",
+  "miniprogramRoot": "miniprogram/",
+  "condition": {}
+}
+
