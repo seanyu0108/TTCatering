@@ -41,19 +41,18 @@
 
 ### 1. 准备 PostgreSQL
 
-本地默认连接 VMware 虚拟机中的 PostgreSQL：
+本地统一连接 VMware 虚拟机中的业务数据库：
 
-| 使用面 | 数据库 | 用户名 | 地址 |
-|---|---|---|---|
-| 用户面 | `ttcatering_console` | `console_rw` | `192.168.165.129:5432` |
-| 管理面 | `ttcatering_portal` | `portal_rw` | `192.168.165.129:5432` |
+| 数据库 | 用户名 | 地址 |
+|---|---|---|
+| `ttcatering` | `manage` | `192.168.165.129:5432` |
 
-本地凭据分别保存在已被 Git 忽略的 `backend/.env.local` 和
-`backend/.env.console.local` 中。其他开发者可从对应的 `.example`
-文件创建自己的本地配置。
+本地凭据保存在已被 Git 忽略的 `backend/.env.local` 中。其他开发者可从
+`backend/.env.local.example` 创建自己的本地配置。管理面和用户面共享这个
+数据库，通过应用接口和管理员权限隔离访问范围。
 
-项目自带的本地容器仍保留用于独立实验；如果改用它，需要同时调整
-`backend/.env.local` 中的数据库连接参数：
+项目自带的本地容器也使用同一个数据库名称和账号。如果改用它，需要设置
+`POSTGRES_PASSWORD`，并将 `backend/.env.local` 中的数据库地址改为 `localhost`：
 
 ```bash
 docker compose -f deploy/local/compose.yaml up -d postgres
@@ -68,19 +67,11 @@ cd backend
 mvn spring-boot:run
 ```
 
-默认激活 `test` profile 并连接用户面数据库，访问
+默认激活 `test` profile 并连接统一业务数据库，访问
 `http://localhost:8080/actuator/health` 检查服务状态。Flyway 会自动创建表和演示菜单。
 
-管理面连接配置使用独立的 `console` profile：
-
-```bash
-cd backend
-SPRING_PROFILES_ACTIVE=console mvn spring-boot:run
-```
-
-管理面配置监听 `http://localhost:8081`。当前后端已实现的是用户点餐业务，
-管理端接口仍属于后续开发范围；该 profile 为管理面后续接口提供独立的数据库连接，
-并暂时关闭 Flyway，避免把用户面表结构写入管理面数据库。
+当前后端已实现的是用户点餐业务。后续管理端接口将使用同一个数据源，
+并通过独立的 `/api/v1/admin/**` 接口和管理员权限控制访问。
 
 主要接口：
 
@@ -111,8 +102,8 @@ npm run dev:mp-weixin
 
 | 环境 | Namespace | Spring Profile | 数据库 | 域名示例 |
 |---|---|---|---|---|
-| 测试 | `scan-order-test` | `test` | `scan_order_test` | `app-test.example.com`、`api-test.example.com` |
-| 生产 | `scan-order-prod` | `prod` | `scan_order_prod` | `app.example.com`、`api.example.com` |
+| 测试 | `scan-order-test` | `test` | `ttcatering` | `app-test.example.com`、`api-test.example.com` |
+| 生产 | `scan-order-prod` | `prod` | `ttcatering` | `app.example.com`、`api.example.com` |
 
 部署前必须修改以下占位内容：
 
@@ -123,18 +114,18 @@ npm run dev:mp-weixin
 
 ### 华为云资源建议
 
-1. 在同一地域创建 CCE 集群、RDS for PostgreSQL 和 SWR 组织。测试库与生产库使用独立实例，至少独立数据库和账号。
+1. 在同一地域创建 CCE 集群、RDS for PostgreSQL 和 SWR 组织。测试与生产使用独立实例；每个环境内部只使用一个 `ttcatering` 业务库，不再按管理面和用户面拆库。
 2. CCE 安装 Nginx Ingress Controller，并绑定华为云 ELB。
 3. RDS 只开放 CCE 节点网段访问，不开放公网；生产库开启自动备份和 PITR。
 4. 为测试和生产分别创建 Kubernetes Secret，不要提交真实密码：
 
 ```bash
 kubectl -n scan-order-test create secret generic scan-order-secrets \
-  --from-literal=DB_USERNAME='scan_order_test' \
+  --from-literal=DB_USERNAME='manage' \
   --from-literal=DB_PASSWORD='replace-me'
 
 kubectl -n scan-order-prod create secret generic scan-order-secrets \
-  --from-literal=DB_USERNAME='scan_order_prod' \
+  --from-literal=DB_USERNAME='manage' \
   --from-literal=DB_PASSWORD='replace-me'
 ```
 

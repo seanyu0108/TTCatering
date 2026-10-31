@@ -2,8 +2,8 @@ spring:
   config:
     import: optional:file:.env.local[.properties]
   datasource:
-    url: jdbc:postgresql://${DB_HOST:192.168.165.129}:${DB_PORT:5432}/${DB_NAME:ttcatering_console}
-    username: ${DB_USERNAME:console_rw}
+    url: jdbc:postgresql://${DB_HOST:192.168.165.129}:${DB_PORT:5432}/${DB_NAME:ttcatering}
+    username: ${DB_USERNAME:manage}
     password: ${DB_PASSWORD}
 
 logging:
