@@ -39,19 +39,24 @@
 
 ## 本地开发
 
-### 1. 启动 PostgreSQL
+### 1. 准备 PostgreSQL
+
+本地默认连接 VMware 虚拟机中的 PostgreSQL：
+
+| 使用面 | 数据库 | 用户名 | 地址 |
+|---|---|---|---|
+| 用户面 | `ttcatering_console` | `console_rw` | `192.168.165.129:5432` |
+| 管理面 | `ttcatering_portal` | `portal_rw` | `192.168.165.129:5432` |
+
+本地凭据分别保存在已被 Git 忽略的 `backend/.env.local` 和
+`backend/.env.console.local` 中。其他开发者可从对应的 `.example`
+文件创建自己的本地配置。
+
+项目自带的本地容器仍保留用于独立实验；如果改用它，需要同时调整
+`backend/.env.local` 中的数据库连接参数：
 
 ```bash
 docker compose -f deploy/local/compose.yaml up -d postgres
-```
-
-默认测试库连接信息：
-
-```text
-数据库：scan_order_test
-用户名：scan_order
-密码：scan_order_test
-端口：5432
 ```
 
 ### 2. 启动后端
@@ -63,7 +68,19 @@ cd backend
 mvn spring-boot:run
 ```
 
-默认激活 `test` profile，访问 `http://localhost:8080/actuator/health` 检查服务状态。Flyway 会自动创建表和演示菜单。
+默认激活 `test` profile 并连接用户面数据库，访问
+`http://localhost:8080/actuator/health` 检查服务状态。Flyway 会自动创建表和演示菜单。
+
+管理面连接配置使用独立的 `console` profile：
+
+```bash
+cd backend
+SPRING_PROFILES_ACTIVE=console mvn spring-boot:run
+```
+
+管理面配置监听 `http://localhost:8081`。当前后端已实现的是用户点餐业务，
+管理端接口仍属于后续开发范围；该 profile 为管理面后续接口提供独立的数据库连接，
+并暂时关闭 Flyway，避免把用户面表结构写入管理面数据库。
 
 主要接口：
 

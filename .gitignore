@@ -12,6 +12,7 @@ frontend/node_modules/
 .idea/
 .vscode/
 .env.local
+.env.*.local
 deploy/k8s/**/secret.yaml
 deploy/k8s/**/secret.env
 
